@@ -1,7 +1,9 @@
-Sensors Indicator
-=================
+Gnome Indicator Extension for Intel GPUs
+============================================
 Show 3D Rendering Load, Video Acceleration Load, and Power Usage of Intel GPUs
-via `sudo intel_gpu_top -l`.
+via `sudo intel_gpu_top`.
+
+![screenshot.png](screenshot.png)
 
 
 Requirements
@@ -12,6 +14,12 @@ This can be easily set up with a new sudoers files such as `/etc/sudoers.d/10-in
 your_user_name ALL = (root) NOPASSWD: /usr/bin/intel_gpu_top
 ```
 Make sure the binary path in the sudoers file points to the actual `intel_gpu_top` binary in your system.
+
+Local Installation
+------------------
+```
+make install
+```
 
 
 Development
