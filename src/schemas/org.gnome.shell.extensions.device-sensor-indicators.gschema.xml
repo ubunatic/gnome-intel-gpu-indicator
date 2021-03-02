@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema id="org.gnome.shell.extensions.intel-gpu-indicator"
+        path="/org/gnome/shell/extensions/intel-gpu-indicator/">
+        <key type="b" name="group-devices">
+            <default>true</default>
+            <summary>Group sensors and aggregate sensor values</summary>
+            <description>
+            Defines how sensor values from multiple devices are handled.
+            If more than one device is present their sensor values are aggregated
+            and only the mean value is displayed.
+            </description>
+        </key>
+    </schema>
+</schemalist>

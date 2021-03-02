@@ -1,0 +1,9 @@
+{
+  "description": "Shows Intel GPU metrics",
+  "shell-version": ["3.38"],
+  "name": "Intel GPU Indicator",
+  "settings-schema": "org.gnome.shell.extensions.intel-gpu-indicator",
+  "uuid": "intel-gpu-indicator",
+  "url": "https://github.com/ubunatic/gnome-intel-gpu-indicator",
+  "version": 1
+}
