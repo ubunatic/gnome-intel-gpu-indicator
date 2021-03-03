@@ -37,7 +37,7 @@ const SensorIndicator = new Lang.Class({
   _init: function () {
     this.parent(0.0, "SensorIndicator")
 
-    this.statusIcon = Ui.NewStatusIcon(Gi.GiCard)
+    this.statusIcon = Ui.NewStatusIcon(Gi.GiOscillator)
     this.panelTitle = new St.Label({y_align: Clutter.ActorAlign.CENTER, text: ""})
 
     let topBox = new St.BoxLayout()
@@ -45,12 +45,12 @@ const SensorIndicator = new Lang.Class({
     topBox.add_actor(this.panelTitle)
     this.add_actor(topBox)
 
-    this.nameModeItem = this._addMenuItem("Show GPU Name", Gi.GiChip, Bind(this, this._activateGPUNameMode))
+    this.nameModeItem = this._addMenuItem("Show GPU Name", Gi.GiOscillator, Bind(this, this._activateGPUNameMode))
   
     this._addSeparator()
-    this.powerModeItem   = this._addMenuItem("Show Power Usage", Gi.GiPower,  Bind(this, this._activatePowerMode))
-    this.renderModeItem  = this._addMenuItem("Show Render Load", Gi.GiCard,   Bind(this, this._activateRenderMode))
-    this.videoModeItem   = this._addMenuItem("Show VA Load", Gi.GiVAccel, Bind(this, this._activateVideoMode))
+    this.powerModeItem   = this._addMenuItem("Show Power Usage", Gi.GiPowerMeter,  Bind(this, this._activatePowerMode))
+    this.renderModeItem  = this._addMenuItem("Show Render Load", Gi.Gi3DMeter,   Bind(this, this._activateRenderMode))
+    this.videoModeItem   = this._addMenuItem("Show VA Load", Gi.GiVAccelMeter, Bind(this, this._activateVideoMode))
   
     /* Root Access Variant Experiments
     this.videoModeItem   = this._addMenuItem("TEST: non root",     Gi.GiVAccel, Bind(this, this._activateNonRoot))
@@ -61,10 +61,11 @@ const SensorIndicator = new Lang.Class({
     // this.tempModeItem = this._addMenuItem("Show Temperature", Gi.GiThermo, Bind(this, this._activateTempMode))
 
     this._addSeparator()
-    this.allModeItem   = this._addMenuItem("Show All", Gi.GiCard,  Bind(this, this._activateAllMode))
-    // this.detachItem = this._addMenuItem("Detach",   Gi.GiCard,  Bind(this, this._activateDetach))
-    this.quitItem      = this._addMenuItem("Quit",     Gi.GiError, Bind(this, this._activateStop))
-  
+    this.allModeItem   = this._addMenuItem("Show All", Gi.GiOscillator,  Bind(this, this._activateAllMode))
+    this._addSeparator()
+    // this.detachItem = this._addMenuItem("Detach",   Gi.GiOscillator,  Bind(this, this._activateDetach))
+    this.quitItem      = this._addMenuItem("Stop GPU Top", Gi.GiError, Bind(this, this._activateStop))
+
     this.settings = Cfg.getSettings()
     this.device = defaultDevice
     this.root = Exec.ROOT_SUDO
@@ -114,7 +115,7 @@ const SensorIndicator = new Lang.Class({
     let gpus = Cmd.ListGPUs()
     log("gpus", gpus)
     if(gpus.length > 0) {
-      this._setTitle(gpus[0], Gi.GiCard)
+      this._setTitle(gpus[0], Gi.GiOscillator)
       return
     }
 
@@ -132,7 +133,7 @@ const SensorIndicator = new Lang.Class({
     }
 
     switch (this.root) {
-      case Exec.ROOT_SUDO: this._setTitle(_("Running as root..."),        Gi.GiClock); break
+      case Exec.ROOT_SUDO: log("running GPU commands as with sudo root user"); break
       case Exec.ROOT_ASK:  this._setTitle(_("Requesting root access..."), Gi.GiClock); break
       default:             log("running GPU commands as non-root user")
     }
@@ -154,15 +155,15 @@ const SensorIndicator = new Lang.Class({
       let gicon = Gi.GiError      
       let index, unit
       switch (this._mode) {
-        case MODE_RENDER: index = 7;  unit = "%"; gicon = Gi.GiCard; break
-        case MODE_POWER:  index = 4;  unit = "W"; gicon = Gi.GiPower; break
+        case MODE_RENDER: index = 7;  unit = "%"; gicon = Gi.Gi3DMeter; break
+        case MODE_POWER:  index = 4;  unit = "W"; gicon = Gi.GiPowerMeter; break
         case MODE_TEMP:   index = 4;  unit = "W"; gicon = Gi.GiThermo; break // TODO: how to read temps?
-        case MODE_VIDEO:  index = 13; unit = "%"; gicon = Gi.GiVAccel; break
+        case MODE_VIDEO:  index = 13; unit = "%"; gicon = Gi.GiVAccelMeter; break
         case MODE_ALL:
           if (row.length > 13) {
-            gicon = Gi.GiPower
+            gicon = Gi.Gi3DMeter
             // TODO: pad text or find a way to have a fixed size output box
-            text = `${row[4]}W  ⚙ ${row[7]}%  🎞 ${row[13]}%`
+            text = `${row[7]}%  ⏲ ${row[13]}%  ᛋ${row[4]}W`
           }
           break
         default: return
@@ -205,7 +206,7 @@ const SensorIndicator = new Lang.Class({
     this._stopGpuTop()
     switch (mode) {
       case MODE_EMPTY:
-        this._setTitle("", Gi.GiCard)
+        this._setTitle("", Gi.GiOscillator)
         break
       case MODE_GPU_NAME:
         this._showGPUName()
